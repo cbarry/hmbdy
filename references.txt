@@ -1,0 +1,7 @@
+nice examples
+#make a virtual env
+virtualenv -p python3 foobar-py3
+
+#activate
+cd pelican
+source bin/activate
