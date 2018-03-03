@@ -27,22 +27,32 @@ class product:
         self.review_count = review_count or ''
 
 def get_product_info(product_page):
-    product_facts = browser.find_elements_by_xpath('//*[@id="tabContent-tab-details"]/div/div[1]/')
-    print(len(product_facts))
+    product_facts = {}
+    name = browser.find_element_by_xpath('//*[@id="mainContainer"]/div/div/div[1]/div/div[1]/h1/span').text
+    product_facts["product_name"] = name
+    product_fact_div = browser.find_elements_by_xpath('//*[@id="tabContent-tab-details"]/div/div[1]/*')
     #first div is always product description
-    description = product_facts[0].text
+    product_facts["description"] = product_fact_div[0].text
+    for i in range(len(product_fact_div)-1):
+        fact_text = product_fact_div[i+1].text
+        try:
+            product_facts[fact_text.split(":")[0]] = fact_text.split(":")[1].lstrip()
+        except:
+            break
+    print(product_facts)
+    return product_facts
 
 def get_product_image(product_page):
     pass
 
 productList = []
 
-browser.get("https://www.target.com/s?searchTerm=chairs&sortBy=relevance&Nao=0&limit=96")
+browser.get("https://www.target.com/s?searchTerm=chairs&sortBy=relevance&Nao=0&limit=6")
 
 time.sleep(1)
 
 webdriver.ActionChains(browser).send_keys(Keys.ESCAPE).perform()
-for i in range(1, 35):
+for i in range(1, 10):
     browser.execute_script("window.scrollBy(0, 500);")
     time.sleep(1)
 
@@ -53,13 +63,17 @@ print(len(product_cards))
 links = [x.get_attribute("href") for x in product_cards]
 print(links, '\n')
 
+product_infos = []
+
 for link in links:
     prod_page = browser.get(link)
-    for i in range(1, 8):
+    for i in range(1, 1):
         browser.execute_script("window.scrollBy(0, 500);")
         time.sleep(1)
-    get_product_info(prod_page)
-    break
+    browser.find_element_by_xpath('//*[@id="tabContent-tab-details"]/div/div[3]/button').click()
+    product_infos.append(get_product_info(prod_page))
+
+print(product_infos)
 
 # Try to find the next PLP page and go to it
 try:
