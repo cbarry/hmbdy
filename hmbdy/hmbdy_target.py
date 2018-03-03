@@ -28,7 +28,10 @@ class product:
         self.review_count = review_count or ''
 
 def get_product_info(product_page):
-    pass
+    product_facts = browser.find_elements_by_xpath('//*[@id="tabContent-tab-details"]/div/div[1]/')
+    print(len(product_facts))
+    #first div is always product description
+    description = product_facts[0].text
 
 def get_product_image(product_page):
     pass
@@ -46,12 +49,19 @@ for i in range(1, 35):
     time.sleep(1)
 
 # find_elements_by_xpath returns an array of selenium objects.
-# product_images = browser.find_elements_by_xpath('//div[@data-test="product-image"]/picture[1]/img[1]')
 product_cards = browser.find_elements_by_xpath('//div[@data-test="product-card"]/div[1]/h3[1]/a[1]')
 print(len(product_cards))
 
 links = [x.get_attribute("href") for x in product_cards]
 print(links, '\n')
+
+for link in links:
+    prod_page = browser.get(link)
+    for i in range(1, 8):
+        browser.execute_script("window.scrollBy(0, 500);")
+        time.sleep(1)
+    get_product_info(prod_page)
+    break
 
 # use list comprehension to get the actual repo titles and not the selenium objects.
 # titles = [x.img.alt for x in titles_element]
