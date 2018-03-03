@@ -15,7 +15,6 @@ opts = Options()
 opts.add_argument(" — incognito")
 
 browser = webdriver.Chrome(executable_path='/Library/Application Support/Google/chromedriver', chrome_options=opts)
-# '/Users/cbarry/Library/Application Support/Google/chromedriver'
 
 # set up product class
 class product:
@@ -38,7 +37,6 @@ def get_product_image(product_page):
 
 productList = []
 
-#browser.get("https://github.com/TheDancerCodes")
 browser.get("https://www.target.com/s?searchTerm=chairs&sortBy=relevance&Nao=0&limit=96")
 
 time.sleep(1)
@@ -63,11 +61,13 @@ for link in links:
     get_product_info(prod_page)
     break
 
-# use list comprehension to get the actual repo titles and not the selenium objects.
-# titles = [x.img.alt for x in titles_element]
-# print out all the titles.
-#print('titles:')
-#print(titles, '\n')
+# Try to find the next PLP page and go to it
+try:
+    next_url = browser.find_element_by_xpath('//a[@data-test="next"]').get_attribute("href")
+    print(next_url)
+    browser.get(next_url)
+except:
+    print("no next page")
 
 
 browser.quit()
