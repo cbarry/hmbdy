@@ -14,7 +14,7 @@ opts = Options()
 # opts.add_argument("user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_6 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) CriOS/64.0.3282.112 Mobile/15D100 Safari/604.1")
 opts.add_argument(" — incognito")
 
-browser = webdriver.Chrome(executable_path='/Users/cbarry/Library/Application Support/Google/chromedriver', chrome_options=opts)
+browser = webdriver.Chrome(executable_path='/Library/Application Support/Google/chromedriver', chrome_options=opts)
 # '/Users/cbarry/Library/Application Support/Google/chromedriver'
 
 # set up SKU class
@@ -46,13 +46,11 @@ for i in range(1, 10):
     browser.execute_script("window.scrollBy(0, 500);")
     time.sleep(3)
 
-# browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
 # find_elements_by_xpath returns an array of selenium objects.
-product_images = browser.find_elements_by_xpath('//div[@data-test="product-image"]')
+product_images = browser.find_elements_by_xpath('//div[@data-test="product-image"]/picture[1]/img[1]')
 #product_images = browser.find_elements_by_xpath('//a[@data-test="product-image"]')
 print(len(product_images))
-titles = [x.picture.img.alt for x in product_images]
+titles = [x.get_attribute("alt") for x in product_images]
 print(titles, '\n')
 
 # use list comprehension to get the actual repo titles and not the selenium objects.
