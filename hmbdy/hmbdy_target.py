@@ -30,12 +30,12 @@ class product:
 productList = []
 
 #browser.get("https://github.com/TheDancerCodes")
-browser.get("https://www.target.com/s?searchTerm=chairs&sortBy=relevance&Nao=0")
+browser.get("https://www.target.com/s?searchTerm=chairs&sortBy=relevance&Nao=0&limit=96")
 
 time.sleep(1)
 
 webdriver.ActionChains(browser).send_keys(Keys.ESCAPE).perform()
-for i in range(1, 10):
+for i in range(1, 35):
     browser.execute_script("window.scrollBy(0, 500);")
     time.sleep(1)
 
