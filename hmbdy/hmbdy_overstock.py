@@ -3,19 +3,32 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.options import Options
 
 import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-option = webdriver.ChromeOptions()
-option.add_argument(" — incognito")
+# set to mweb
+opts = Options()
+# opts.add_argument("user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_6 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) CriOS/64.0.3282.112 Mobile/15D100 Safari/604.1")
+opts.add_argument(" — incognito")
 
-browser = webdriver.Chrome(executable_path='/Users/cbarry/Library/Application Support/Google/chromedriver', chrome_options=option)
+browser = webdriver.Chrome(executable_path='/Users/cbarry/Library/Application Support/Google/chromedriver', chrome_options=opts)
 # '/Users/cbarry/Library/Application Support/Google/chromedriver'
 
+# set up SKU class
+class product:
+    def __init__(self, sku, name, lead_image, price, review_stars, review_count):
+        self.sku = sku
+        self.name = name
+        self.lead_image = lead_image
+        self.price = price
+        self.review_stars = review_stars
+        self.review_count = review_count
+
 #browser.get("https://github.com/TheDancerCodes")
-browser.get("https://www.westelm.com/shop/furniture/sectionals")
+browser.get("https://www.target.com/s?searchTerm=chairs&sortBy=relevance&Nao=0")
 
 """# Wait 20 seconds for page to load
 timeout = 20
@@ -28,13 +41,12 @@ except TimeoutException:
 
 time.sleep(5)
 
-modal = browser.find_element_by_class_name("stickyOverlayMinimizeButton").click()
-# modal.send_keys(Keys.ESCAPE).perform()
+webdriver.ActionChains(browser).send_keys(Keys.ESCAPE).perform()
 
 # find_elements_by_xpath returns an array of selenium objects.
-titles_element = browser.find_elements_by_xpath("//a[@class='product-name']")
+titles_element = browser.find_elements_by_xpath('//a[@data-test="product-image"]')
 # use list comprehension to get the actual repo titles and not the selenium objects.
-titles = [x.text for x in titles_element]
+titles = [x.img.alt for x in titles_element]
 # print out all the titles.
 print('titles:')
 print(titles, '\n')
