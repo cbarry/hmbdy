@@ -36,7 +36,7 @@ def get_product_info(product_page):
     for i in range(len(product_fact_div)-1):
         fact_text = product_fact_div[i+1].text
         try:
-            product_facts[fact_text.split(":")[0]] = fact_text.split(":")[1].lstrip()
+            product_facts[fact_text.split(":", 1)[0]] = fact_text.split(":", 1)[1].lstrip()
         except:
             break
     print(product_facts)
