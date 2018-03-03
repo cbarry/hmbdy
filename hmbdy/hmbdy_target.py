@@ -27,6 +27,12 @@ class product:
         self.review_stars = review_stars or ''
         self.review_count = review_count or ''
 
+def get_product_info(product_page):
+    pass
+
+def get_product_image(product_page):
+    pass
+
 productList = []
 
 #browser.get("https://github.com/TheDancerCodes")
