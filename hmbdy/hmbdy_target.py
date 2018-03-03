@@ -17,41 +17,35 @@ opts.add_argument(" — incognito")
 browser = webdriver.Chrome(executable_path='/Library/Application Support/Google/chromedriver', chrome_options=opts)
 # '/Users/cbarry/Library/Application Support/Google/chromedriver'
 
-# set up SKU class
+# set up product class
 class product:
     def __init__(self, sku, name, lead_image, price, review_stars, review_count):
-        self.sku = sku
-        self.name = name
-        self.lead_image = lead_image
-        self.price = price
-        self.review_stars = review_stars
-        self.review_count = review_count
+        self.sku = sku or ''
+        self.name = name or ''
+        self.lead_image = lead_image or ''
+        self.price = price or ''
+        self.review_stars = review_stars or ''
+        self.review_count = review_count or ''
+
+productList = []
 
 #browser.get("https://github.com/TheDancerCodes")
 browser.get("https://www.target.com/s?searchTerm=chairs&sortBy=relevance&Nao=0")
 
-"""# Wait 20 seconds for page to load
-timeout = 20
-try:
-    WebDriverWait(browser, timeout).until(EC.visibility_of_element_located((By.XPATH, "//img[@class='product-thumb hoverSwap']")))
-except TimeoutException:
-    print("Timed out waiting for page to load")
-    browser.quit()
-"""
-
-time.sleep(2)
+time.sleep(1)
 
 webdriver.ActionChains(browser).send_keys(Keys.ESCAPE).perform()
 for i in range(1, 10):
     browser.execute_script("window.scrollBy(0, 500);")
-    time.sleep(3)
+    time.sleep(1)
 
 # find_elements_by_xpath returns an array of selenium objects.
-product_images = browser.find_elements_by_xpath('//div[@data-test="product-image"]/picture[1]/img[1]')
-#product_images = browser.find_elements_by_xpath('//a[@data-test="product-image"]')
-print(len(product_images))
-titles = [x.get_attribute("alt") for x in product_images]
-print(titles, '\n')
+# product_images = browser.find_elements_by_xpath('//div[@data-test="product-image"]/picture[1]/img[1]')
+product_cards = browser.find_elements_by_xpath('//div[@data-test="product-card"]/div[1]/h3[1]/a[1]')
+print(len(product_cards))
+
+links = [x.get_attribute("href") for x in product_cards]
+print(links, '\n')
 
 # use list comprehension to get the actual repo titles and not the selenium objects.
 # titles = [x.img.alt for x in titles_element]
