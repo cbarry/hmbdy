@@ -41,11 +41,16 @@ def scrape_PLP(base_url):
     product_infos = []
     for link in pdp_links:
         prod_page = browser.get(link)
+        webdriver.ActionChains(browser).send_keys(Keys.ESCAPE).perform()
         for i in range(1, 1):
             browser.execute_script("window.scrollBy(0, 500);")
             time.sleep(1)
-        browser.find_element_by_xpath('//*[@id="tabContent-tab-details"]/div/div[3]/button').click()
-        product_infos.append(get_product_info(prod_page))
+        try:
+            browser.find_element_by_xpath('//*[@id="tabContent-tab-details"]/div/div[3]/button').click()
+            product_infos.append(get_product_info(prod_page))
+        except:
+            # this is a broken product next_page
+            product_infos.append({'product_url': link, 'scrape_successful': 'false'})
 
     return product_infos
 
@@ -62,9 +67,11 @@ def get_product_info(product_page):
     # get product SKU
     product_facts["SKU"] = re.search('(?<=\/A-)\d{2,15}', browser.current_url).group(0)
 
+    # THIS ISN'T WORKING AND IT'S SOME LAZY LOADING THING AND I'M NOT SURE HOW TO GET AROUND IT
     # get product lead image URL
-    image_url = browser.find_element_by_xpath('//div[@data-test="filmstrip"]/div/ul/li[1]/button/img').get_attribute('src')
-    product_facts["product_lead_image"] = image_url
+    # image_url = browser.find_element_by_xpath('//div[@data-test="filmstrip"]/div/ul/li[1]/button/img').get_attribute('src')
+    #image_url = browser.find_element_by_xpath('//div[@class="slide--active"]/a[1]/div[1]/div[1]/picture/img').get_attribute('src')
+    # product_facts["product_lead_image"] = image_url
 
     # get product price
     price = browser.find_element_by_xpath('//div[@data-test="product-price"]/span').text
@@ -94,13 +101,17 @@ def get_product_info(product_page):
 
 # start here
 product_infos = []
-base_url = "https://www.target.com/c/chairs-living-room-furniture/-/N-5xtlz?limit=96&Nao=0"
-#base_url = "https://www.target.com/c/chairs-living-room-furniture/-/N-5xtlz?limit=5&Nao=0"
+#base_url = "https://www.target.com/c/chairs-living-room-furniture/-/N-5xtlz?limit=96&Nao=0"
+base_url = "https://www.target.com/c/chairs-living-room-furniture/-/N-5xtlz?limit=5&Nao=0"
+file_path = '/tmp/hmbdy_temp_' + time.strftime("%d-%b-%Y %H.%M.%S") + '.txt'
 
 next_page = True
 while next_page :
     product_infos.append(scrape_PLP(base_url))
     print(product_infos)
+
+    with open(file_path, 'a') as file:
+        file.write(json.dumps(product_infos))
 
     # Try to find the next PLP page and go to it
     try:
@@ -110,11 +121,5 @@ while next_page :
     except:
         print("no next page")
         next_page = False
-
-# Write to a file
-# file_path = '~/Desktop/workfile.txt'
-# with open('workfile', 'w') as f:
-#     json.dump(product_infos, f)
-# f.closed
 
 browser.quit()
