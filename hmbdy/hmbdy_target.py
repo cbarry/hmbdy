@@ -8,6 +8,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import json
 import re
+import urllib.request
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -72,6 +73,11 @@ def get_product_info(product_page):
     #image_url = browser.find_element_by_xpath('//div[@class="slide--active"]/a[1]/div[1]/div[1]/picture/img').get_attribute('src')
     product_facts["product_lead_image"] = 'http://target.scene7.com/is/image/Target/' + product_facts["SKU"] + '?wid=488&hei=488&fmt=pjpeg'
 
+    # save off lead image
+    img = urllib.request.urlopen(product_facts["product_lead_image"])
+    with open(file_path + '/' + product_facts["SKU"] + '.jpeg','wb') as localFile:
+     localFile.write(img.read())
+
     # get product price
     price = browser.find_element_by_xpath('//div[@data-test="product-price"]/span').text
 
@@ -102,14 +108,15 @@ def get_product_info(product_page):
 product_infos = []
 #base_url = "https://www.target.com/c/chairs-living-room-furniture/-/N-5xtlz?limit=96&Nao=0"
 base_url = "https://www.target.com/c/chairs-living-room-furniture/-/N-5xtlz?limit=5&Nao=0"
-file_path = '/tmp/hmbdy_temp_' + time.strftime("%d-%b-%Y %H.%M.%S") + '.txt'
+file_path = '/tmp/hmbdy'
+logfile_path = '/temp_' + time.strftime("%d-%b-%Y %H.%M.%S") + '.txt'
 
 next_page = True
 while next_page :
     product_infos.append(scrape_PLP(base_url))
     print(product_infos)
 
-    with open(file_path, 'a') as file:
+    with open(logfile_path, 'a') as file:
         file.write(json.dumps(product_infos))
 
     # Try to find the next PLP page and go to it
