@@ -47,10 +47,11 @@ def scrape_PLP(base_url):
             time.sleep(1)
         try:
             browser.find_element_by_xpath('//*[@id="tabContent-tab-details"]/div/div[3]/button').click()
-            product_infos.append(get_product_info(prod_page))
         except:
             # this is a broken product next_page
             product_infos.append({'product_url': link, 'scrape_successful': 'false'})
+        else:
+            product_infos.append(get_product_info(prod_page))
 
     return product_infos
 
@@ -67,11 +68,9 @@ def get_product_info(product_page):
     # get product SKU
     product_facts["SKU"] = re.search('(?<=\/A-)\d{2,15}', browser.current_url).group(0)
 
-    # THIS ISN'T WORKING AND IT'S SOME LAZY LOADING THING AND I'M NOT SURE HOW TO GET AROUND IT
-    # get product lead image URL
-    # image_url = browser.find_element_by_xpath('//div[@data-test="filmstrip"]/div/ul/li[1]/button/img').get_attribute('src')
+    # get product lead image URL — this is not so smart
     #image_url = browser.find_element_by_xpath('//div[@class="slide--active"]/a[1]/div[1]/div[1]/picture/img').get_attribute('src')
-    # product_facts["product_lead_image"] = image_url
+    product_facts["product_lead_image"] = 'http://target.scene7.com/is/image/Target/' + product_facts["SKU"] + '?wid=488&hei=488&fmt=pjpeg'
 
     # get product price
     price = browser.find_element_by_xpath('//div[@data-test="product-price"]/span').text
