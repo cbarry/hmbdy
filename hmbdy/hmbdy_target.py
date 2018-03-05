@@ -4,13 +4,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 import time
 import json
 import re
 import urllib.request
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
+import imagehash
+from PIL import Image
 
 
 # set to mweb
@@ -75,8 +77,11 @@ def get_product_info(product_page):
 
     # save off lead image
     img = urllib.request.urlopen(product_facts["product_lead_image"])
-    with open(file_path + '/' + product_facts["SKU"] + '.jpeg','wb') as localFile:
+    local_image = file_path + '/' + product_facts["SKU"] + '.jpeg'
+    with open(local_image,'wb') as localFile:
      localFile.write(img.read())
+
+    product_facts["image_hash"] = str(imagehash.phash(Image.open(local_image)))
 
     # get product price
     price = browser.find_element_by_xpath('//div[@data-test="product-price"]/span').text
